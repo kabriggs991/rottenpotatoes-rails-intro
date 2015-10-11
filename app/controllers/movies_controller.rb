@@ -11,10 +11,6 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
-
-  #def index
-  #  @movies = Movie.all
-  #end
   
   def index
     @all_ratings = Movie.all_ratings
@@ -37,26 +33,20 @@ class MoviesController < ApplicationController
       session[:ratings] = @filter_ratings
       redirect_to :sort_by => sort_by, :ratings => @filter_ratings and return
     end
-
     
-    if( sort_by == 'release_date' && !params[:ratings].nil? ) then
+    if( sort_by == 'release_date' ) then
       @release_header = 'hilite'
-      array_ratings = params[:ratings].keys
-      @movies = Movie.where(rating: array_ratings).order(params[:sort_by])
-    elsif( sort_by == 'release_date' && params[:ratings].nil? )
-      @release_header = 'hilite' 
-      @movies = Movie.where(rating: @all_ratings).order(params[:sort_by])
     else
-      if( !params[:ratings].nil? ) then
-        @title_header = 'hilite'
-        array_ratings = params[:ratings].keys
-        @movies = Movie.where(rating: array_ratings).order(params[:sort_by])
-      else
-        @title_header = 'hilite'
-        @movies = Movie.where(rating: @all_ratings).order(params[:sort_by])
-      end
+      @title_header = 'hilite'
     end
-      
+    
+    if( @filter_ratings.is_a?(Hash) ) then
+      array_ratings = @filter_ratings.keys
+    else
+      array_ratings = @filter_ratings
+    end
+    
+    @movies = Movie.where(rating: array_ratings).order(params[:sort_by])
     
   end
 
